@@ -1,0 +1,32 @@
+[
+    {
+        "id": 1,
+        "title": "Cashflow 101 Workshop",
+        "category": "Workshop",
+        "date": "2026-05-31",
+        "time": "10:00 AM – 4:00 PM",
+        "location": "Manila, Philippines",
+        "image": null,
+        "url": null
+    },
+    {
+        "id": 2,
+        "title": "Philippine Cashflow Mixer",
+        "category": "Networking",
+        "date": "2026-06-15",
+        "time": "6:00 PM – 10:00 PM",
+        "location": "Cebu City",
+        "image": null,
+        "url": null
+    },
+    {
+        "id": 3,
+        "title": "Investing for Freedom",
+        "category": "Seminar",
+        "date": "2026-06-28",
+        "time": "1:00 PM – 5:00 PM",
+        "location": "Davao City",
+        "image": null,
+        "url": null
+    }
+]
