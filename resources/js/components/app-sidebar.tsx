@@ -1,5 +1,11 @@
-import { Link } from '@inertiajs/react';
-import { Facebook, Globe, LayoutGrid, Settings } from 'lucide-react';
+import { Link, usePage } from '@inertiajs/react';
+import {
+    Facebook,
+    Globe,
+    LayoutGrid,
+    Settings,
+    SlidersHorizontal,
+} from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -14,21 +20,29 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard, home } from '@/routes';
+import { index as configuration } from '@/routes/configuration';
 import { index as settings } from '@/routes/settings';
 import type { NavItem } from '@/types';
 
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
-    },
-    {
-        title: 'Settings',
-        href: settings(),
-        icon: Settings,
-    },
-];
+const dashboardNavItem: NavItem = {
+    title: 'Dashboard',
+    href: dashboard(),
+    icon: LayoutGrid,
+};
+
+/* Guarded by the `administer` gate server-side; hiding it here only keeps the
+   rail honest about what this member can reach. */
+const configurationNavItem: NavItem = {
+    title: 'Configuration',
+    href: configuration(),
+    icon: SlidersHorizontal,
+};
+
+const settingsNavItem: NavItem = {
+    title: 'Settings',
+    href: settings(),
+    icon: Settings,
+};
 
 const footerNavItems: NavItem[] = [
     {
@@ -44,6 +58,14 @@ const footerNavItems: NavItem[] = [
 ];
 
 export function AppSidebar() {
+    const { auth } = usePage().props;
+
+    const mainNavItems: NavItem[] = [
+        dashboardNavItem,
+        ...(auth.user?.is_admin ? [configurationNavItem] : []),
+        settingsNavItem,
+    ];
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader className="border-gold-400/10 mb-2 border-b pb-3">
