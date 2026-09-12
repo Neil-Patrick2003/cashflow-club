@@ -2,6 +2,7 @@ import { createInertiaApp } from '@inertiajs/react';
 import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import AppLayout from '@/layouts/app-layout';
+import ConfigurationLayout from '@/layouts/configuration/layout';
 import AuthLayout from '@/layouts/auth-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 
@@ -15,6 +16,8 @@ void createInertiaApp({
                 return null;
             case name.startsWith('auth/'):
                 return AuthLayout;
+            case name.startsWith('configuration/'):
+                return [AppLayout, ConfigurationLayout];
             case name.startsWith('settings/'):
                 return [AppLayout, SettingsLayout];
             default:
