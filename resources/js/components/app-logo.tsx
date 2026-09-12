@@ -1,18 +1,20 @@
-import { usePage } from '@inertiajs/react';
-
-import AppLogoIcon from '@/components/app-logo-icon';
-
+/** The landing page's lockup, sized for the sidebar rail. */
 export default function AppLogo() {
-    const { name } = usePage().props;
-
     return (
         <>
-            <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-md">
-                <AppLogoIcon className="size-5 fill-current text-white dark:text-black" />
-            </div>
-            <div className="ml-1 grid flex-1 text-left text-sm">
-                <span className="mb-0.5 truncate leading-tight font-semibold">
-                    {name}
+            <img
+                src="/cashflow-logo-96.png"
+                alt=""
+                width={36}
+                height={36}
+                className="size-9 shrink-0 group-data-[collapsible=icon]:size-8"
+            />
+            <div className="grid flex-1 text-left leading-none group-data-[collapsible=icon]:hidden">
+                <span className="text-gold-400 text-[0.625rem] font-bold tracking-[0.22em] uppercase">
+                    Philippine
+                </span>
+                <span className="font-display mt-1 truncate text-lg leading-none font-extrabold tracking-wide text-white uppercase">
+                    Cashflow Club
                 </span>
             </div>
         </>

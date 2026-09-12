@@ -2,6 +2,16 @@
 
 use App\Models\User;
 
+test('the settings entry point redirects to the profile page', function () {
+    $user = User::factory()->create();
+
+    $response = $this
+        ->actingAs($user)
+        ->get(route('settings.index'));
+
+    $response->assertRedirect(route('profile.edit'));
+});
+
 test('profile page is displayed', function () {
     $user = User::factory()->create();
 

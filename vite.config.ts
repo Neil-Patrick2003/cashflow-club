@@ -42,6 +42,11 @@ export default defineConfig({
                 '**/.cursor/**',
                 '**/.junie/**',
                 '**/vendor/**',
+                // Written on every single request - Boost's browser log, a
+                // local SQLite file - so watching them turns each page load
+                // into the trigger for the next full reload.
+                '**/storage/**',
+                '**/*.sqlite*',
             ],
         },
     },

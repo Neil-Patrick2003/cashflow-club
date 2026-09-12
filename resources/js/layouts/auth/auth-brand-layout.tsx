@@ -103,9 +103,7 @@ export default function AuthBrandLayout({
     description,
 }: AuthLayoutProps) {
     return (
-        /* `dark` scopes the shadcn palette to this surface: the auth pages are
-           always the night theme, whatever the visitor's appearance setting. */
-        <div className="dark bg-ink-950 h-svh overflow-hidden text-white">
+        <div className="bg-ink-950 h-svh overflow-hidden text-white">
             <SiteHeader />
 
             {/* Exactly one screen at every width: the viewport less the sticky
