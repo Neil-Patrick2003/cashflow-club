@@ -1,16 +1,19 @@
 import { Form, Head } from '@inertiajs/react';
-import InputError from '@/components/input-error';
+import { Lock, Mail } from 'lucide-react';
+import AuthField, {
+    authControlClassName,
+    authLinkClassName,
+} from '@/components/auth-field';
+import AuthSubmitButton from '@/components/auth-submit-button';
+import PasskeyVerify from '@/components/passkey-verify';
 import PasswordInput from '@/components/password-input';
 import TextLink from '@/components/text-link';
-import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
 import { register } from '@/routes';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
-import PasskeyVerify from '@/components/passkey-verify';
 
 type Props = {
     status?: string;
@@ -22,18 +25,26 @@ export default function Login({ status, canResetPassword }: Props) {
         <>
             <Head title="Log in" />
 
-            <PasskeyVerify />
+            {status && (
+                <div className="text-gold-400 mb-4 text-center text-sm font-medium">
+                    {status}
+                </div>
+            )}
 
             <Form
                 {...store.form()}
                 resetOnSuccess={['password']}
-                className="flex flex-col gap-6"
+                className="flex flex-col gap-5 sm:gap-6"
             >
                 {({ processing, errors }) => (
                     <>
-                        <div className="grid gap-6">
-                            <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
+                        <div className="grid gap-3 sm:gap-4">
+                            <AuthField
+                                htmlFor="email"
+                                label="Email address"
+                                icon={Mail}
+                                error={errors.email}
+                            >
                                 <Input
                                     id="email"
                                     type="email"
@@ -42,24 +53,17 @@ export default function Login({ status, canResetPassword }: Props) {
                                     autoFocus
                                     tabIndex={1}
                                     autoComplete="email"
-                                    placeholder="email@example.com"
+                                    placeholder="Email Address"
+                                    className={authControlClassName}
                                 />
-                                <InputError message={errors.email} />
-                            </div>
+                            </AuthField>
 
-                            <div className="grid gap-2">
-                                <div className="flex items-center">
-                                    <Label htmlFor="password">Password</Label>
-                                    {canResetPassword && (
-                                        <TextLink
-                                            href={request()}
-                                            className="ml-auto text-sm"
-                                            tabIndex={5}
-                                        >
-                                            Forgot your password?
-                                        </TextLink>
-                                    )}
-                                </div>
+                            <AuthField
+                                htmlFor="password"
+                                label="Password"
+                                icon={Lock}
+                                error={errors.password}
+                            >
                                 <PasswordInput
                                     id="password"
                                     name="password"
@@ -67,51 +71,68 @@ export default function Login({ status, canResetPassword }: Props) {
                                     tabIndex={2}
                                     autoComplete="current-password"
                                     placeholder="Password"
+                                    className={authControlClassName}
                                 />
-                                <InputError message={errors.password} />
-                            </div>
+                            </AuthField>
+                        </div>
 
-                            <div className="flex items-center space-x-3">
+                        <div className="flex items-center justify-between gap-4">
+                            <div className="flex items-center gap-2.5">
                                 <Checkbox
                                     id="remember"
                                     name="remember"
                                     tabIndex={3}
+                                    className="data-[state=checked]:border-gold-400 data-[state=checked]:bg-gold-400 data-[state=checked]:text-royal-950 border-white/25"
                                 />
-                                <Label htmlFor="remember">Remember me</Label>
+                                <Label
+                                    htmlFor="remember"
+                                    className="text-sm text-white/70"
+                                >
+                                    Remember me
+                                </Label>
                             </div>
 
-                            <Button
-                                type="submit"
-                                className="mt-4 w-full"
-                                tabIndex={4}
-                                disabled={processing}
-                                data-test="login-button"
-                            >
-                                {processing && <Spinner />}
-                                Log in
-                            </Button>
+                            {canResetPassword && (
+                                <TextLink
+                                    href={request()}
+                                    className={`text-sm ${authLinkClassName}`}
+                                    tabIndex={5}
+                                >
+                                    Forgot password?
+                                </TextLink>
+                            )}
                         </div>
 
-                        <div className="text-muted-foreground text-center text-sm">
-                            Don't have an account?{' '}
-                            <TextLink href={register()} tabIndex={5}>
-                                Sign up
-                            </TextLink>
-                        </div>
+                        <AuthSubmitButton
+                            processing={processing}
+                            tabIndex={4}
+                            data-test="login-button"
+                        >
+                            Log In
+                        </AuthSubmitButton>
                     </>
                 )}
             </Form>
 
-            {status && (
-                <div className="mb-4 text-center text-sm font-medium text-green-600">
-                    {status}
-                </div>
-            )}
+            <div className="mt-6">
+                <PasskeyVerify separatorPlacement="before" />
+            </div>
+
+            <div className="mt-6 text-center text-sm text-white/60">
+                Not a member yet?{' '}
+                <TextLink
+                    href={register()}
+                    className={`font-semibold ${authLinkClassName}`}
+                    tabIndex={5}
+                >
+                    Join the Club
+                </TextLink>
+            </div>
         </>
     );
 }
 
 Login.layout = {
-    title: 'Log in to your account',
-    description: 'Enter your email and password below to log in',
+    title: 'Welcome back',
+    description: 'Log in to keep building your cashflow future.',
 };

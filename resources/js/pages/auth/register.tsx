@@ -1,11 +1,13 @@
 import { Form, Head } from '@inertiajs/react';
-import InputError from '@/components/input-error';
+import { Lock, Mail, User } from 'lucide-react';
+import AuthField, {
+    authControlClassName,
+    authLinkClassName,
+} from '@/components/auth-field';
+import AuthSubmitButton from '@/components/auth-submit-button';
 import PasswordInput from '@/components/password-input';
 import TextLink from '@/components/text-link';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
 
@@ -17,104 +19,116 @@ export default function Register({ passwordRules }: Props) {
     return (
         <>
             <Head title="Register" />
+
             <Form
                 {...store.form()}
                 resetOnSuccess={['password', 'password_confirmation']}
                 disableWhileProcessing
-                className="flex flex-col gap-6"
+                className="flex flex-col gap-5 sm:gap-6"
             >
                 {({ processing, errors }) => (
                     <>
-                        <div className="grid gap-6">
-                            <div className="grid gap-2">
-                                <Label htmlFor="name">Name</Label>
+                        <div className="grid gap-3 sm:gap-4">
+                            <AuthField
+                                htmlFor="name"
+                                label="Full name"
+                                icon={User}
+                                error={errors.name}
+                            >
                                 <Input
                                     id="name"
                                     type="text"
+                                    name="name"
                                     required
                                     autoFocus
                                     tabIndex={1}
                                     autoComplete="name"
-                                    name="name"
-                                    placeholder="Full name"
+                                    placeholder="Full Name"
+                                    className={authControlClassName}
                                 />
-                                <InputError
-                                    message={errors.name}
-                                    className="mt-2"
-                                />
-                            </div>
+                            </AuthField>
 
-                            <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
+                            <AuthField
+                                htmlFor="email"
+                                label="Email address"
+                                icon={Mail}
+                                error={errors.email}
+                            >
                                 <Input
                                     id="email"
                                     type="email"
+                                    name="email"
                                     required
                                     tabIndex={2}
                                     autoComplete="email"
-                                    name="email"
-                                    placeholder="email@example.com"
+                                    placeholder="Email Address"
+                                    className={authControlClassName}
                                 />
-                                <InputError message={errors.email} />
-                            </div>
+                            </AuthField>
 
-                            <div className="grid gap-2">
-                                <Label htmlFor="password">Password</Label>
+                            <AuthField
+                                htmlFor="password"
+                                label="Password"
+                                icon={Lock}
+                                error={errors.password}
+                            >
                                 <PasswordInput
                                     id="password"
+                                    name="password"
                                     required
                                     tabIndex={3}
                                     autoComplete="new-password"
-                                    name="password"
-                                    placeholder="Password"
+                                    placeholder="Create Password"
                                     passwordrules={passwordRules}
+                                    className={authControlClassName}
                                 />
-                                <InputError message={errors.password} />
-                            </div>
+                            </AuthField>
 
-                            <div className="grid gap-2">
-                                <Label htmlFor="password_confirmation">
-                                    Confirm password
-                                </Label>
+                            <AuthField
+                                htmlFor="password_confirmation"
+                                label="Confirm password"
+                                icon={Lock}
+                                error={errors.password_confirmation}
+                            >
                                 <PasswordInput
                                     id="password_confirmation"
+                                    name="password_confirmation"
                                     required
                                     tabIndex={4}
                                     autoComplete="new-password"
-                                    name="password_confirmation"
-                                    placeholder="Confirm password"
+                                    placeholder="Confirm Password"
                                     passwordrules={passwordRules}
+                                    className={authControlClassName}
                                 />
-                                <InputError
-                                    message={errors.password_confirmation}
-                                />
-                            </div>
-
-                            <Button
-                                type="submit"
-                                className="mt-2 w-full"
-                                tabIndex={5}
-                                data-test="register-user-button"
-                            >
-                                {processing && <Spinner />}
-                                Create account
-                            </Button>
+                            </AuthField>
                         </div>
 
-                        <div className="text-muted-foreground text-center text-sm">
-                            Already have an account?{' '}
-                            <TextLink href={login()} tabIndex={6}>
-                                Log in
-                            </TextLink>
-                        </div>
+                        <AuthSubmitButton
+                            processing={processing}
+                            tabIndex={5}
+                            data-test="register-user-button"
+                        >
+                            Create Account
+                        </AuthSubmitButton>
                     </>
                 )}
             </Form>
+
+            <div className="mt-6 text-center text-sm text-white/60">
+                Already a member?{' '}
+                <TextLink
+                    href={login()}
+                    className={`font-semibold ${authLinkClassName}`}
+                    tabIndex={6}
+                >
+                    Log in
+                </TextLink>
+            </div>
         </>
     );
 }
 
 Register.layout = {
-    title: 'Create an account',
-    description: 'Enter your details below to create your account',
+    title: 'Create your account',
+    description: 'Start your journey to financial freedom today.',
 };

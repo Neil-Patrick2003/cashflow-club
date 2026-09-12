@@ -4,7 +4,6 @@ import { usePasskeyVerify } from '@laravel/passkeys/react';
 import { KeyRound } from 'lucide-react';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { Spinner } from '@/components/ui/spinner';
 
 type Props = {
@@ -15,6 +14,8 @@ type Props = {
     label?: string;
     loadingLabel?: string;
     separator?: string;
+    /** Whether the divider sits above the button or below it. */
+    separatorPlacement?: 'before' | 'after';
 };
 
 export default function PasskeyVerify({
@@ -22,6 +23,7 @@ export default function PasskeyVerify({
     label,
     loadingLabel,
     separator,
+    separatorPlacement = 'after',
 }: Props = {}) {
     const { verify, isLoading, error, isSupported } = usePasskeyVerify({
         ...(routes && {
@@ -39,17 +41,29 @@ export default function PasskeyVerify({
         return null;
     }
 
+    const divider = (
+        <div className="flex items-center gap-4">
+            <span className="h-px flex-1 bg-white/15" />
+            <span className="text-xs font-semibold tracking-[0.2em] text-white/45 uppercase">
+                {separator ?? 'Or'}
+            </span>
+            <span className="h-px flex-1 bg-white/15" />
+        </div>
+    );
+
     return (
-        <>
+        <div className="grid gap-6">
+            {separatorPlacement === 'before' ? divider : null}
+
             <div className="grid gap-2">
                 <Button
                     type="button"
                     variant="outline"
-                    className="w-full"
+                    className="h-12 w-full rounded-xl border-white/15 bg-white/5 text-sm font-semibold text-white hover:border-white/25 hover:bg-white/10 hover:text-white"
                     onClick={verify}
                     disabled={isLoading}
                 >
-                    {isLoading ? <Spinner /> : <KeyRound className="h-4 w-4" />}
+                    {isLoading ? <Spinner /> : <KeyRound className="size-4" />}
                     {isLoading
                         ? (loadingLabel ?? 'Authenticating...')
                         : (label ?? 'Sign in with a passkey')}
@@ -59,16 +73,7 @@ export default function PasskeyVerify({
                 )}
             </div>
 
-            <div className="relative my-6">
-                <div className="absolute inset-0 flex items-center">
-                    <Separator className="w-full" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-background text-muted-foreground px-2">
-                        {separator ?? 'Or continue with email'}
-                    </span>
-                </div>
-            </div>
-        </>
+            {separatorPlacement === 'after' ? divider : null}
+        </div>
     );
 }

@@ -13,6 +13,8 @@
         'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
     --font-display:
         'Barlow Condensed', 'Manrope', ui-sans-serif, system-ui, sans-serif;
+    /* Handwritten signature line — "More than a club. It's a movement." */
+    --font-script: 'Caveat', 'Brush Script MT', cursive;
 
     /* Brand: royal purple — backgrounds, sections, cards, navigation */
     --color-royal-950: #24004f;

@@ -19,6 +19,9 @@ export default defineConfig({
                 bunny('Manrope', {
                     weights: [400, 500, 600, 700, 800],
                 }),
+                bunny('Caveat', {
+                    weights: [600, 700],
+                }),
             ],
         }),
         inertia(),

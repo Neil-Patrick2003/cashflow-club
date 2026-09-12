@@ -1,58 +1,62 @@
 import { Form, Head } from '@inertiajs/react';
-import InputError from '@/components/input-error';
-import PasswordInput from '@/components/password-input';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
-import { store } from '@/routes/password/confirm';
+import { Lock } from 'lucide-react';
 import {
     index as confirmOptions,
     store as confirmStore,
 } from '@/actions/Laravel/Passkeys/Http/Controllers/PasskeyConfirmationController';
+import AuthField, { authControlClassName } from '@/components/auth-field';
+import AuthSubmitButton from '@/components/auth-submit-button';
 import PasskeyVerify from '@/components/passkey-verify';
+import PasswordInput from '@/components/password-input';
+import { store } from '@/routes/password/confirm';
 
 export default function ConfirmPassword() {
     return (
         <>
             <Head title="Confirm password" />
 
-            <PasskeyVerify
-                routes={{
-                    options: confirmOptions(),
-                    submit: confirmStore(),
-                }}
-                label="Confirm with passkey"
-                loadingLabel="Confirming..."
-                separator="Or confirm with password"
-            />
+            <div className="mb-6">
+                <PasskeyVerify
+                    routes={{
+                        options: confirmOptions(),
+                        submit: confirmStore(),
+                    }}
+                    label="Confirm with passkey"
+                    loadingLabel="Confirming..."
+                    separator="Or confirm with password"
+                />
+            </div>
 
-            <Form {...store.form()} resetOnSuccess={['password']}>
+            <Form
+                {...store.form()}
+                resetOnSuccess={['password']}
+                className="flex flex-col gap-5 sm:gap-6"
+            >
                 {({ processing, errors }) => (
-                    <div className="space-y-6">
-                        <div className="grid gap-2">
-                            <Label htmlFor="password">Password</Label>
+                    <>
+                        <AuthField
+                            htmlFor="password"
+                            label="Password"
+                            icon={Lock}
+                            error={errors.password}
+                        >
                             <PasswordInput
                                 id="password"
                                 name="password"
                                 placeholder="Password"
                                 autoComplete="current-password"
                                 autoFocus
+                                className={authControlClassName}
                             />
+                        </AuthField>
 
-                            <InputError message={errors.password} />
-                        </div>
-
-                        <div className="flex items-center">
-                            <Button
-                                className="w-full"
-                                disabled={processing}
-                                data-test="confirm-password-button"
-                            >
-                                {processing && <Spinner />}
-                                Confirm password
-                            </Button>
-                        </div>
-                    </div>
+                        <AuthSubmitButton
+                            processing={processing}
+                            data-test="confirm-password-button"
+                        >
+                            Confirm password
+                        </AuthSubmitButton>
+                    </>
                 )}
             </Form>
         </>

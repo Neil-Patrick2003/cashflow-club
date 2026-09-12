@@ -1,8 +1,10 @@
 import { Form, Head, setLayoutProps } from '@inertiajs/react';
 import { REGEXP_ONLY_DIGITS } from 'input-otp';
+import { KeyRound } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import AuthField, { authControlClassName } from '@/components/auth-field';
+import AuthSubmitButton from '@/components/auth-submit-button';
 import InputError from '@/components/input-error';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
     InputOTP,
@@ -56,25 +58,29 @@ export default function TwoFactorChallenge() {
             <div className="space-y-6">
                 <Form
                     {...store.form()}
-                    className="space-y-4"
+                    className="flex flex-col gap-5 sm:gap-6"
                     resetOnError
                     resetOnSuccess={!showRecoveryInput}
                 >
                     {({ errors, processing, clearErrors }) => (
                         <>
                             {showRecoveryInput ? (
-                                <>
+                                <AuthField
+                                    htmlFor="recovery_code"
+                                    label="Recovery code"
+                                    icon={KeyRound}
+                                    error={errors.recovery_code}
+                                >
                                     <Input
+                                        id="recovery_code"
                                         name="recovery_code"
                                         type="text"
                                         placeholder="Enter recovery code"
                                         autoFocus={showRecoveryInput}
                                         required
+                                        className={authControlClassName}
                                     />
-                                    <InputError
-                                        message={errors.recovery_code}
-                                    />
-                                </>
+                                </AuthField>
                             ) : (
                                 <div className="flex flex-col items-center justify-center space-y-3 text-center">
                                     <div className="flex w-full items-center justify-center">
@@ -94,6 +100,7 @@ export default function TwoFactorChallenge() {
                                                         <InputOTPSlot
                                                             key={index}
                                                             index={index}
+                                                            className="size-11 border-white/15 text-base text-white first:rounded-l-lg last:rounded-r-lg"
                                                         />
                                                     ),
                                                 )}
@@ -104,19 +111,15 @@ export default function TwoFactorChallenge() {
                                 </div>
                             )}
 
-                            <Button
-                                type="submit"
-                                className="w-full"
-                                disabled={processing}
-                            >
+                            <AuthSubmitButton processing={processing}>
                                 Continue
-                            </Button>
+                            </AuthSubmitButton>
 
-                            <div className="text-muted-foreground text-center text-sm">
+                            <div className="text-center text-sm text-white/60">
                                 <span>or you can </span>
                                 <button
                                     type="button"
-                                    className="text-foreground cursor-pointer underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
+                                    className="text-gold-400 decoration-gold-400/40 hover:decoration-gold-400! cursor-pointer underline underline-offset-4 transition-colors duration-300 ease-out"
                                     onClick={() =>
                                         toggleRecoveryMode(clearErrors)
                                     }

@@ -3,13 +3,15 @@ import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { dashboard, home, login, register } from '@/routes';
 
+/* Anchors are resolved against the landing page, so the header works
+   unchanged on pages that don't host these sections (login, register, ...). */
 const navigation = [
-    { label: 'Home', href: '#top' },
-    { label: 'About', href: '#about' },
-    { label: 'Membership', href: '#membership' },
-    { label: 'Events', href: '#events' },
-    { label: 'Resources', href: '#resources' },
-    { label: 'Contact', href: '#contact' },
+    { label: 'Home', hash: '#top' },
+    { label: 'About', hash: '#about' },
+    { label: 'Membership', hash: '#membership' },
+    { label: 'Events', hash: '#events' },
+    { label: 'Resources', hash: '#resources' },
+    { label: 'Contact', hash: '#contact' },
 ];
 
 function ClubLogo({ markOnly = false }: { markOnly?: boolean }) {
@@ -69,6 +71,7 @@ function MenuIcon({ isOpen }: { isOpen: boolean }) {
 export default function SiteHeader() {
     const { auth } = usePage().props;
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const homeUrl = home().url;
 
     /** Lock background scrolling and close on Escape while the drawer is open. */
     useEffect(() => {
@@ -110,8 +113,8 @@ export default function SiteHeader() {
                     <nav className="hidden items-center gap-7 lg:flex lg:justify-self-center">
                         {navigation.map((item) => (
                             <a
-                                key={item.href}
-                                href={item.href}
+                                key={item.hash}
+                                href={`${homeUrl}${item.hash}`}
                                 className="hover:text-gold-400 text-sm font-medium text-white/70 transition-colors"
                             >
                                 {item.label}
@@ -201,8 +204,8 @@ export default function SiteHeader() {
                     <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-6 py-6">
                         {navigation.map((item, index) => (
                             <a
-                                key={item.href}
-                                href={item.href}
+                                key={item.hash}
+                                href={`${homeUrl}${item.hash}`}
                                 onClick={() => setIsMenuOpen(false)}
                                 style={{
                                     transitionDelay: isMenuOpen
