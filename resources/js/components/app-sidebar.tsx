@@ -1,5 +1,6 @@
 import { Link, usePage } from '@inertiajs/react';
 import {
+    CalendarDays,
     Facebook,
     Globe,
     LayoutGrid,
@@ -21,6 +22,7 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard, home } from '@/routes';
 import { index as configuration } from '@/routes/configuration';
+import { index as events } from '@/routes/events';
 import { index as settings } from '@/routes/settings';
 import type { NavItem } from '@/types';
 
@@ -30,8 +32,14 @@ const dashboardNavItem: NavItem = {
     icon: LayoutGrid,
 };
 
-/* Guarded by the `administer` gate server-side; hiding it here only keeps the
-   rail honest about what this member can reach. */
+/* Both are guarded by the `administer` gate server-side; hiding them here only
+   keeps the rail honest about what this member can reach. */
+const eventsNavItem: NavItem = {
+    title: 'Events',
+    href: events(),
+    icon: CalendarDays,
+};
+
 const configurationNavItem: NavItem = {
     title: 'Configuration',
     href: configuration(),
@@ -62,7 +70,7 @@ export function AppSidebar() {
 
     const mainNavItems: NavItem[] = [
         dashboardNavItem,
-        ...(auth.user?.is_admin ? [configurationNavItem] : []),
+        ...(auth.user?.is_admin ? [eventsNavItem, configurationNavItem] : []),
         settingsNavItem,
     ];
 

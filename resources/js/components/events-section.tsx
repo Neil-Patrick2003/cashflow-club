@@ -1,36 +1,9 @@
 import { Link } from '@inertiajs/react';
 import { ArrowRight, Clock, Image as ImageIcon, MapPin } from 'lucide-react';
 import eventsData from '@/data/events.json';
+import { toDateParts } from '@/lib/format';
 import type { ClubEvent } from '@/types/events';
 import { register } from '@/routes';
-
-const MONTHS = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-];
-
-/**
- * Formats `YYYY-MM-DD` without Date parsing, so server and client renders
- * agree regardless of timezone.
- */
-function formatDate(date: string): { month: string; day: string } {
-    const [, month, day] = date.split('-');
-
-    return {
-        month: MONTHS[Number(month) - 1] ?? '',
-        day: String(Number(day)),
-    };
-}
 
 /** Falls back to the bundled sample data until a server prop is wired up. */
 export default function EventsSection({
@@ -67,7 +40,7 @@ export default function EventsSection({
 
                 <ul className="mt-8 grid gap-4 sm:mt-12 sm:gap-6 md:grid-cols-2 xl:grid-cols-3 xl:gap-8">
                     {events.map((event) => {
-                        const { month, day } = formatDate(event.date);
+                        const { month, day } = toDateParts(event.date);
 
                         return (
                             <li key={event.id}>
