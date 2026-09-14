@@ -28,13 +28,16 @@ export type AccessMethod = 'MEMBERSHIP' | 'PAID' | 'VOUCHER';
 /** Where the money has got to. A seat opens pending and stays there until in. */
 export type PaymentStatus = 'PENDING' | 'PAID';
 
+/** How the club took the money, recorded by hand in admin once it is in. */
+export type PaymentMethod = 'CASH' | 'BANK_TRANSFER' | 'GCASH';
+
 /** What one seat owes the club. */
 export type Payment = {
     id: number;
     registration_id: number;
     amount: string;
     /** Recorded by hand in admin once the money is taken. */
-    method: string | null;
+    method: PaymentMethod | null;
     status: PaymentStatus;
     paid_at: string | null;
 };
@@ -47,6 +50,22 @@ export type Registration = {
     access_method: AccessMethod;
     price_due: string;
     payment?: Payment | null;
+};
+
+/** What the payments page is currently narrowed and ordered by. */
+export type PaymentFilters = {
+    search: string | null;
+    status: PaymentStatus | null;
+    sort: string | null;
+};
+
+/**
+ * One seat on the admin payments page: who holds it, what it is for, and what
+ * it owes. A seat covered by membership carries no payment at all.
+ */
+export type SeatPayment = Registration & {
+    user: { id: number; name: string; email: string };
+    game: Game;
 };
 
 /** A user who can run an SRT session. */

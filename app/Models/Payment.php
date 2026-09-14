@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use Database\Factories\PaymentFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -16,7 +17,7 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property int $registration_id
  * @property string $amount
- * @property string|null $method
+ * @property PaymentMethod|null $method
  * @property PaymentStatus $status
  * @property Carbon|null $paid_at
  * @property Carbon|null $created_at
@@ -37,6 +38,7 @@ class Payment extends Model
     {
         return [
             'amount' => 'decimal:2',
+            'method' => PaymentMethod::class,
             'status' => PaymentStatus::class,
             'paid_at' => 'datetime',
         ];

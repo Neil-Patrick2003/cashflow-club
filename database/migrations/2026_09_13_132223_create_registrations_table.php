@@ -20,7 +20,6 @@ return new class extends Migration
             /** What this seat leaves them owing; zero unless they are paying. */
             $table->decimal('price_due', 10, 2)->default(0);
             /** Presented at the door and scanned on the way in. */
-            $table->string('qr_token')->unique();
             /**
              * One voucher is redeemable once, ever. No foreign key yet: the
              * vouchers table does not exist, so add one when it lands.

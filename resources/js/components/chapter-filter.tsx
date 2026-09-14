@@ -5,7 +5,7 @@ import type { Chapter } from '@/types';
 
 /* Gold marks the chapter being read, the same way it marks everything else a
    member has acted on. */
-function FilterPill({
+function ChapterPill({
     href,
     isSelected,
     children,
@@ -56,18 +56,18 @@ export default function ChapterFilter({
     return (
         <nav aria-label="Filter games by chapter">
             <ul className="flex flex-wrap gap-2">
-                <FilterPill href={games()} isSelected={selected === null}>
+                <ChapterPill href={games()} isSelected={selected === null}>
                     All chapters
-                </FilterPill>
+                </ChapterPill>
 
                 {chapters.map((chapter) => (
-                    <FilterPill
+                    <ChapterPill
                         key={chapter.id}
                         href={games({ query: { chapter: chapter.id } })}
                         isSelected={selected === chapter.id}
                     >
                         {chapter.name}
-                    </FilterPill>
+                    </ChapterPill>
                 ))}
             </ul>
         </nav>

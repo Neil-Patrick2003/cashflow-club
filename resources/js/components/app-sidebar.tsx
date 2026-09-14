@@ -7,6 +7,7 @@ import {
     LayoutGrid,
     Settings,
     SlidersHorizontal,
+    Wallet,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
@@ -25,6 +26,7 @@ import { dashboard, home } from '@/routes';
 import { index as configuration } from '@/routes/configuration';
 import { index as events } from '@/routes/events';
 import { index as games } from '@/routes/games';
+import { index as payments } from '@/routes/payments';
 import { index as settings } from '@/routes/settings';
 import type { NavItem } from '@/types';
 
@@ -47,6 +49,12 @@ const eventsNavItem: NavItem = {
     title: 'Events',
     href: events(),
     icon: CalendarDays,
+};
+
+const paymentsNavItem: NavItem = {
+    title: 'Payments',
+    href: payments(),
+    icon: Wallet,
 };
 
 const configurationNavItem: NavItem = {
@@ -80,7 +88,9 @@ export function AppSidebar() {
     const mainNavItems: NavItem[] = [
         dashboardNavItem,
         gamesNavItem,
-        ...(auth.user?.is_admin ? [eventsNavItem, configurationNavItem] : []),
+        ...(auth.user?.is_admin
+            ? [eventsNavItem, paymentsNavItem, configurationNavItem]
+            : []),
         settingsNavItem,
     ];
 

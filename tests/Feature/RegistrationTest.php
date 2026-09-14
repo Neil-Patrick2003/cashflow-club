@@ -73,20 +73,6 @@ test('someone without a membership pays the guest price', function () {
         ->price_due->toBe('800.00');
 });
 
-test('every seat is given its own token to scan in on', function () {
-    $game = upcomingGame(['capacity' => 5]);
-    $this->actingAs(member());
-    $this->post(route('registrations.store', $game));
-    $this->actingAs(member());
-    $this->post(route('registrations.store', $game));
-
-    $tokens = Registration::pluck('qr_token');
-
-    expect($tokens)->toHaveCount(2)
-        ->and($tokens->unique())->toHaveCount(2)
-        ->and($tokens->first())->not->toBeEmpty();
-});
-
 test('a member cannot take two seats at the same game', function () {
     $this->actingAs($user = member());
     $game = upcomingGame();
@@ -171,18 +157,6 @@ test('a seat covered by membership comes back with no payment on it', function (
     $response->assertInertia(
         fn ($page) => $page->where('games.0.registration.access_method', 'MEMBERSHIP')
             ->where('games.0.registration.payment', null)
-    );
-});
-
-test('the door token is kept off the page', function () {
-    $this->actingAs($user = member());
-    $game = upcomingGame();
-    Registration::factory()->for($user)->for($game)->create();
-
-    $response = $this->get(route('games.index'));
-
-    $response->assertInertia(
-        fn ($page) => $page->missing('games.0.registration.qr_token')
     );
 });
 
