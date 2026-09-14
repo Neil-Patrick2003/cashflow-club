@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\AccessMethod;
 use App\Enums\GameStatus;
 use App\Enums\GameType;
 use Database\Factories\GameFactory;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -70,6 +72,36 @@ class Game extends Model
                 $game->master_facilitator_id = null;
             }
         });
+    }
+
+    /**
+     * How the given person gets into this game and what it leaves them owing.
+     *
+     * A member walks into anything their membership covers; everything else is
+     * paid for, at the member price if they hold a level and the guest price if
+     * they do not. Vouchers are redeemed separately, not decided here.
+     *
+     * @return array{access_method: AccessMethod, price_due: string}
+     */
+    public function entryFor(User $user): array
+    {
+        $price = $user->isMember() ? $this->member_price : $this->non_member_price;
+
+        if ($user->isMember() && (float) $price === 0.0) {
+            return ['access_method' => AccessMethod::Membership, 'price_due' => '0.00'];
+        }
+
+        return ['access_method' => AccessMethod::Paid, 'price_due' => $price];
+    }
+
+    /**
+     * The seats claimed at this game.
+     *
+     * @return HasMany<Registration, $this>
+     */
+    public function registrations(): HasMany
+    {
+        return $this->hasMany(Registration::class);
     }
 
     /**

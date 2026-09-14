@@ -7,6 +7,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -21,6 +22,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property Carbon|null $email_verified_at
  * @property string $password
  * @property bool $is_admin
+ * @property int|null $membership_level_id
  * @property string|null $two_factor_secret
  * @property string|null $two_factor_recovery_codes
  * @property Carbon|null $two_factor_confirmed_at
@@ -48,5 +50,24 @@ class User extends Authenticatable implements PasskeyUser
             'is_admin' => 'boolean',
             'two_factor_confirmed_at' => 'datetime',
         ];
+    }
+
+    /**
+     * The level this member has reached, if they are a member at all.
+     *
+     * @return BelongsTo<MembershipLevel, $this>
+     */
+    public function membershipLevel(): BelongsTo
+    {
+        return $this->belongsTo(MembershipLevel::class);
+    }
+
+    /**
+     * Whether the club counts this person as a member. Holding a level is what
+     * makes one; everyone else is a guest and pays guest prices.
+     */
+    public function isMember(): bool
+    {
+        return $this->membership_level_id !== null;
     }
 }

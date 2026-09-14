@@ -1,6 +1,7 @@
 import { Link, usePage } from '@inertiajs/react';
 import {
     CalendarDays,
+    Dices,
     Facebook,
     Globe,
     LayoutGrid,
@@ -23,6 +24,7 @@ import {
 import { dashboard, home } from '@/routes';
 import { index as configuration } from '@/routes/configuration';
 import { index as events } from '@/routes/events';
+import { index as games } from '@/routes/games';
 import { index as settings } from '@/routes/settings';
 import type { NavItem } from '@/types';
 
@@ -30,6 +32,13 @@ const dashboardNavItem: NavItem = {
     title: 'Dashboard',
     href: dashboard(),
     icon: LayoutGrid,
+};
+
+/** The member's own view of what is coming up, open to everyone. */
+const gamesNavItem: NavItem = {
+    title: 'Find games',
+    href: games(),
+    icon: Dices,
 };
 
 /* Both are guarded by the `administer` gate server-side; hiding them here only
@@ -70,6 +79,7 @@ export function AppSidebar() {
 
     const mainNavItems: NavItem[] = [
         dashboardNavItem,
+        gamesNavItem,
         ...(auth.user?.is_admin ? [eventsNavItem, configurationNavItem] : []),
         settingsNavItem,
     ];

@@ -8,6 +8,7 @@ import {
 import EmptyState from '@/components/empty-state';
 import EventActionsMenu from '@/components/event-actions-menu';
 import EventAddMenu from '@/components/event-add-menu';
+import DateChip from '@/components/date-chip';
 import GameDeleteDialog from '@/components/game-delete-dialog';
 import GameFormDialog from '@/components/game-form-dialog';
 import SeminarDeleteDialog from '@/components/seminar-delete-dialog';
@@ -21,31 +22,17 @@ import {
     eventTiming,
     formatHolding,
 } from '@/lib/events';
-import {
-    formatPeso,
-    formatTime,
-    formatWeekday,
-    toDateParts,
-} from '@/lib/format';
+import { formatPeso, formatTime, formatWeekday } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { Chapter, Event, EventType, Facilitator } from '@/types';
 
 /* Nothing on the calendar is drawn with a hairline: every surface is separated
    by its own fill, so gold marks the day the club is running, a past event
    sinks back towards the page, and everything else sits on plain ink. */
-const timingStyles: Record<EventTiming, { card: string; chip: string }> = {
-    today: {
-        card: 'bg-gold-400/[0.07] hover:bg-gold-400/[0.1]',
-        chip: 'bg-gold-400/20 text-gold-300',
-    },
-    upcoming: {
-        card: 'bg-ink-900/60 hover:bg-ink-800/50',
-        chip: 'bg-royal-800/70 text-white',
-    },
-    past: {
-        card: 'bg-ink-900/35 hover:bg-ink-900/60',
-        chip: 'bg-white/5 text-white/45',
-    },
+const cardStyles: Record<EventTiming, string> = {
+    today: 'bg-gold-400/[0.07] hover:bg-gold-400/[0.1]',
+    upcoming: 'bg-ink-900/60 hover:bg-ink-800/50',
+    past: 'bg-ink-900/35 hover:bg-ink-900/60',
 };
 
 const typeStyles: Record<EventType, string> = {
@@ -71,27 +58,6 @@ function EventTypePill({ type }: { type: EventType }) {
         >
             {typeLabels[type]}
         </span>
-    );
-}
-
-/** The date as a stacked chip, so the list is scannable by day. */
-function DateChip({ date, timing }: { date: string; timing: EventTiming }) {
-    const { month, day } = toDateParts(date);
-
-    return (
-        <div
-            className={cn(
-                'flex size-12 shrink-0 flex-col items-center justify-center rounded-lg',
-                timingStyles[timing].chip,
-            )}
-        >
-            <span className="text-[0.625rem] font-bold tracking-[0.18em] uppercase opacity-70">
-                {month}
-            </span>
-            <span className="font-display text-lg leading-none font-extrabold">
-                {day}
-            </span>
-        </div>
     );
 }
 
@@ -270,7 +236,7 @@ function EventCard({
         <li
             className={cn(
                 'rounded-xl p-4 transition-colors md:px-5',
-                timingStyles[timing].card,
+                cardStyles[timing],
             )}
         >
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-4">

@@ -22,6 +22,33 @@ export type GameType = 'REGULAR' | 'SRT';
 
 export type GameStatus = 'SCHEDULED' | 'OPEN' | 'COMPLETED' | 'CANCELLED';
 
+/** How a person got their seat: covered, paid for, or redeemed. */
+export type AccessMethod = 'MEMBERSHIP' | 'PAID' | 'VOUCHER';
+
+/** Where the money has got to. A seat opens pending and stays there until in. */
+export type PaymentStatus = 'PENDING' | 'PAID';
+
+/** What one seat owes the club. */
+export type Payment = {
+    id: number;
+    registration_id: number;
+    amount: string;
+    /** Recorded by hand in admin once the money is taken. */
+    method: string | null;
+    status: PaymentStatus;
+    paid_at: string | null;
+};
+
+/** One person's seat at one game. A covered seat carries no payment. */
+export type Registration = {
+    id: number;
+    user_id: number;
+    game_id: number;
+    access_method: AccessMethod;
+    price_due: string;
+    payment?: Payment | null;
+};
+
 /** A user who can run an SRT session. */
 export type Facilitator = {
     id: number;
@@ -47,6 +74,24 @@ export type Game = {
     master_facilitator_id: number | null;
     master_facilitator?: Facilitator | null;
     status: GameStatus;
+    /** The event the game runs at, loaded for the member schedule. */
+    event?: Event;
+    registrations_count?: number;
+};
+
+/**
+ * A game on the member schedule, carrying what it would cost this particular
+ * member. The server decides both, so nobody registers at a price of their own
+ * choosing.
+ */
+export type ScheduledGame = Game & {
+    registrations_count: number;
+    /** This member's own seat, or null if they have not claimed one. */
+    registration: Registration | null;
+    entry: {
+        access_method: AccessMethod;
+        price_due: string;
+    };
 };
 
 /** One seminar inside an event. */
