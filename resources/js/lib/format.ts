@@ -66,6 +66,13 @@ export function toDateParts(date: string): { month: string; day: string } {
     };
 }
 
+/** The month an ISO date or timestamp falls in, as `Feb 2025`. */
+export function formatMonthYear(date: string): string {
+    const [year, month] = date.slice(0, 10).split('-');
+
+    return `${MONTHS[Number(month) - 1] ?? ''} ${year}`;
+}
+
 /** The day an ISO date falls on, as `Saturday`. */
 export function formatWeekday(date: string): string {
     return new Date(`${date.slice(0, 10)}T00:00:00`).toLocaleDateString(

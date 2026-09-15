@@ -11,6 +11,17 @@ export type LevelRequirement = {
     updated_at: string;
 };
 
+/**
+ * One requirement with how far the member has got toward it. The pass/fail
+ * assessment carries no count, and stays shut until the counted requirements
+ * are done.
+ */
+export type RequirementProgress = LevelRequirement & {
+    progress: number | null;
+    is_met: boolean;
+    is_locked: boolean;
+};
+
 /** A membership level members progress through, lowest rank order first. */
 export type MembershipLevel = {
     id: number;

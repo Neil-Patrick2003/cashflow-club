@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -50,6 +51,27 @@ class User extends Authenticatable implements PasskeyUser
             'is_admin' => 'boolean',
             'two_factor_confirmed_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Every member carries a card, so one is issued the moment the account is
+     * created rather than left to whoever created it to remember.
+     */
+    protected static function booted(): void
+    {
+        static::created(function (User $user): void {
+            MembershipCard::issueTo($user);
+        });
+    }
+
+    /**
+     * The card this member shows at the door.
+     *
+     * @return HasOne<MembershipCard, $this>
+     */
+    public function membershipCard(): HasOne
+    {
+        return $this->hasOne(MembershipCard::class);
     }
 
     /**

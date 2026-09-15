@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\GameScheduleController;
+use App\Http\Controllers\MembershipCardController;
+use App\Http\Controllers\ProgressController;
 use App\Http\Controllers\RegistrationController;
 use Illuminate\Support\Facades\Route;
 
@@ -8,6 +10,12 @@ Route::inertia('/', 'welcome')->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
+
+    /* What the next level asks of this member, and how far along they are. */
+    Route::get('progress', [ProgressController::class, 'index'])->name('progress.index');
+
+    /* The member's own card, issued to them when they registered. */
+    Route::get('card', [MembershipCardController::class, 'show'])->name('card.show');
 
     /* Open to every member: the admin side of games lives in events.php. */
     Route::get('games', [GameScheduleController::class, 'index'])->name('games.index');

@@ -3,14 +3,8 @@ import LevelRequirementController from '@/actions/App/Http/Controllers/Configura
 import FormDialog from '@/components/form-dialog';
 import RequirementFormDialog from '@/components/requirement-form-dialog';
 import { Button } from '@/components/ui/button';
+import { requirementLabel } from '@/lib/membership';
 import type { LevelRequirement, MembershipLevel } from '@/types';
-
-/** How one requirement reads in a chip. */
-export function requirementLabel(requirement: LevelRequirement): string {
-    return requirement.type === 'ELIGIBLE_GAMES'
-        ? `${requirement.int_value} eligible games`
-        : 'Facilitator assessment';
-}
 
 function RequirementChip({
     level,

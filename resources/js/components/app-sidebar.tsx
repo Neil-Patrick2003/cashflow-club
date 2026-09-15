@@ -4,8 +4,10 @@ import {
     Dices,
     Facebook,
     Globe,
+    IdCard,
     LayoutGrid,
     Settings,
+    TrendingUp,
     SlidersHorizontal,
     Wallet,
 } from 'lucide-react';
@@ -26,6 +28,8 @@ import { dashboard, home } from '@/routes';
 import { index as configuration } from '@/routes/configuration';
 import { index as events } from '@/routes/events';
 import { index as games } from '@/routes/games';
+import { show as card } from '@/routes/card';
+import { index as progress } from '@/routes/progress';
 import { index as payments } from '@/routes/payments';
 import { index as settings } from '@/routes/settings';
 import type { NavItem } from '@/types';
@@ -41,6 +45,20 @@ const gamesNavItem: NavItem = {
     title: 'Find games',
     href: games(),
     icon: Dices,
+};
+
+/** Issued to every member when they registered. */
+const cardNavItem: NavItem = {
+    title: 'My card',
+    href: card(),
+    icon: IdCard,
+};
+
+/** What the next level asks of this member. */
+const progressNavItem: NavItem = {
+    title: 'My progress',
+    href: progress(),
+    icon: TrendingUp,
 };
 
 /* Both are guarded by the `administer` gate server-side; hiding them here only
@@ -88,6 +106,8 @@ export function AppSidebar() {
     const mainNavItems: NavItem[] = [
         dashboardNavItem,
         gamesNavItem,
+        cardNavItem,
+        progressNavItem,
         ...(auth.user?.is_admin
             ? [eventsNavItem, paymentsNavItem, configurationNavItem]
             : []),
