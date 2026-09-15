@@ -1,9 +1,10 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import ChapterFilter from '@/components/chapter-filter';
 import GameScheduleSection from '@/components/game-schedule-section';
 import PageHeader from '@/components/page-header';
+import { scheduleTitle } from '@/lib/games';
 import { index as games } from '@/routes/games';
-import type { Chapter, ScheduledGame } from '@/types';
+import type { Auth, Chapter, ScheduledGame } from '@/types';
 
 export default function Games({
     games: items,
@@ -17,15 +18,25 @@ export default function Games({
     chapter: number | null;
     membershipLevel: string | null;
 }) {
+    const { auth } = usePage().props;
+    const isAdmin = auth.user?.is_admin ?? false;
+
     return (
         <>
-            <Head title="Find games" />
+            <Head title={scheduleTitle(isAdmin)} />
 
             <div className="flex h-full flex-1 flex-col gap-6 px-4 py-6 md:gap-8 md:px-6 md:py-8">
+                {/* An admin is reading the club's schedule rather than shopping
+                    for a seat, so the page says what it is instead of inviting
+                    them in. */}
                 <PageHeader
                     eyebrow="Club"
-                    title="Find a game"
-                    description="Browse every chapter. Your member price is applied automatically."
+                    title={isAdmin ? 'Games' : 'Find a game'}
+                    description={
+                        isAdmin
+                            ? 'Every game still to come, across every chapter. Open one to see who is turning up.'
+                            : 'Browse every chapter. Your member price is applied automatically.'
+                    }
                 />
 
                 <ChapterFilter chapters={chapters} selected={chapter} />
@@ -33,17 +44,18 @@ export default function Games({
                 <GameScheduleSection
                     games={items}
                     membershipLevel={membershipLevel}
+                    isAdmin={isAdmin}
                 />
             </div>
         </>
     );
 }
 
-Games.layout = {
+Games.layout = ({ auth }: { auth: Auth }) => ({
     breadcrumbs: [
         {
-            title: 'Find games',
+            title: scheduleTitle(auth.user?.is_admin ?? false),
             href: games(),
         },
     ],
-};
+});

@@ -72,4 +72,15 @@ class Registration extends Model
     {
         return $this->hasOne(Payment::class);
     }
+
+    /**
+     * Whether the holder turned up, and how the door knew. Absent until they
+     * do: a seat nobody took up simply never gets one.
+     *
+     * @return HasOne<Attendance, $this>
+     */
+    public function attendance(): HasOne
+    {
+        return $this->hasOne(Attendance::class);
+    }
 }

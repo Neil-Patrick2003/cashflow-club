@@ -24,6 +24,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { scheduleTitle } from '@/lib/games';
 import { dashboard, home } from '@/routes';
 import { index as configuration } from '@/routes/configuration';
 import { index as events } from '@/routes/events';
@@ -40,12 +41,15 @@ const dashboardNavItem: NavItem = {
     icon: LayoutGrid,
 };
 
-/** The member's own view of what is coming up, open to everyone. */
-const gamesNavItem: NavItem = {
-    title: 'Find games',
+/**
+ * What is coming up, open to everyone. An admin runs the club's games rather
+ * than looks for one, so the rail says so.
+ */
+const gamesNavItem = (isAdmin: boolean): NavItem => ({
+    title: scheduleTitle(isAdmin),
     href: games(),
     icon: Dices,
-};
+});
 
 /** Issued to every member when they registered. */
 const cardNavItem: NavItem = {
@@ -102,13 +106,14 @@ const footerNavItems: NavItem[] = [
 
 export function AppSidebar() {
     const { auth } = usePage().props;
+    const isAdmin = auth.user?.is_admin ?? false;
 
     const mainNavItems: NavItem[] = [
         dashboardNavItem,
-        gamesNavItem,
+        gamesNavItem(isAdmin),
         cardNavItem,
         progressNavItem,
-        ...(auth.user?.is_admin
+        ...(isAdmin
             ? [eventsNavItem, paymentsNavItem, configurationNavItem]
             : []),
         settingsNavItem,

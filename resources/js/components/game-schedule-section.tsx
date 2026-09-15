@@ -1,6 +1,8 @@
+import { Link } from '@inertiajs/react';
 import {
     CalendarDays,
     Check,
+    ClipboardList,
     Clock3,
     Dices,
     MapPin,
@@ -14,13 +16,10 @@ import { Button } from '@/components/ui/button';
 import { useToday } from '@/hooks/use-today';
 import { type EventTiming, eventTiming } from '@/lib/events';
 import { formatPeso, formatTime, toDateParts } from '@/lib/format';
+import { gameTypeLabels } from '@/lib/games';
 import { cn } from '@/lib/utils';
+import { roster } from '@/routes/games';
 import type { GameType, ScheduledGame } from '@/types';
-
-const typeLabels: Record<GameType, string> = {
-    REGULAR: 'Regular game',
-    SRT: 'SRT session',
-};
 
 /* The facilitated session is the premium one, so it is the one in gold; the
    standard session states its kind and stays out of the way. */
@@ -103,15 +102,79 @@ function formatSchedule(game: ScheduledGame, timing: EventTiming): string {
     return `${month} ${day} · ${time}`;
 }
 
+/**
+ * What the card leaves the reader to do. A member claims a seat; an admin runs
+ * the game rather than sits at it, so theirs opens the roster instead, whatever
+ * state the game is in.
+ */
+function GameAction({
+    game,
+    isAdmin,
+}: {
+    game: ScheduledGame;
+    isAdmin: boolean;
+}) {
+    if (isAdmin) {
+        return (
+            <Button asChild>
+                <Link href={roster(game.id)} prefetch>
+                    <ClipboardList />
+                    Roster
+                </Link>
+            </Button>
+        );
+    }
+
+    /* A seat that still owes money says so, so a member scanning the page can
+       see what is outstanding. */
+    if (game.registration?.payment?.status === 'PENDING') {
+        return (
+            <Button variant="outline" disabled>
+                <Clock3 />
+                Pending payment
+            </Button>
+        );
+    }
+
+    if (game.registration) {
+        return (
+            <Button variant="outline" disabled>
+                <Check />
+                Registered
+            </Button>
+        );
+    }
+
+    if (game.status === 'CANCELLED') {
+        return (
+            <p className="text-muted-foreground text-sm font-semibold">
+                Cancelled
+            </p>
+        );
+    }
+
+    if (game.registrations_count >= game.capacity) {
+        return (
+            <p className="text-muted-foreground text-sm font-semibold">
+                Fully booked
+            </p>
+        );
+    }
+
+    return <GameRegisterDialog game={game} />;
+}
+
 /** One game a member can turn up to. */
 function GameCard({
     game,
     today,
     membershipLevel,
+    isAdmin,
 }: {
     game: ScheduledGame;
     today: string | null;
     membershipLevel: string | null;
+    isAdmin: boolean;
 }) {
     const event = game.event;
     const timing = event ? eventTiming(event, today) : 'upcoming';
@@ -126,7 +189,7 @@ function GameCard({
                         typeStyles[game.type],
                     )}
                 >
-                    {typeLabels[game.type]}
+                    {gameTypeLabels[game.type]}
                 </p>
 
                 {event?.chapter && (
@@ -170,29 +233,7 @@ function GameCard({
                 </div>
 
                 <div className="shrink-0">
-                    {/* A seat that still owes money says so, so a member
-                        scanning the page can see what is outstanding. */}
-                    {game.registration?.payment?.status === 'PENDING' ? (
-                        <Button variant="outline" disabled>
-                            <Clock3 />
-                            Pending payment
-                        </Button>
-                    ) : game.registration ? (
-                        <Button variant="outline" disabled>
-                            <Check />
-                            Registered
-                        </Button>
-                    ) : game.status === 'CANCELLED' ? (
-                        <p className="text-muted-foreground text-sm font-semibold">
-                            Cancelled
-                        </p>
-                    ) : game.registrations_count >= game.capacity ? (
-                        <p className="text-muted-foreground text-sm font-semibold">
-                            Fully booked
-                        </p>
-                    ) : (
-                        <GameRegisterDialog game={game} />
-                    )}
+                    <GameAction game={game} isAdmin={isAdmin} />
                 </div>
             </div>
         </li>
@@ -203,9 +244,12 @@ function GameCard({
 export default function GameScheduleSection({
     games,
     membershipLevel,
+    isAdmin = false,
 }: {
     games: ScheduledGame[];
     membershipLevel: string | null;
+    /** Whether the reader runs the club's games rather than plays in them. */
+    isAdmin?: boolean;
 }) {
     const today = useToday();
 
@@ -229,6 +273,7 @@ export default function GameScheduleSection({
                     game={game}
                     today={today}
                     membershipLevel={membershipLevel}
+                    isAdmin={isAdmin}
                 />
             ))}
         </ul>

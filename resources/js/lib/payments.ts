@@ -1,6 +1,53 @@
 import { router } from '@inertiajs/react';
+import { formatPeso } from '@/lib/format';
 import { index as payments } from '@/routes/payments';
-import type { PaymentFilters } from '@/types';
+import type {
+    AccessMethod,
+    Payment,
+    PaymentFilters,
+    PaymentMethod,
+    PaymentStatus,
+} from '@/types';
+
+/* How the member got in, which is what decides whether there is anything to
+   collect at all: a covered seat owes nothing, a paid one owes the price it
+   was taken at, and a redeemed one was settled by the voucher. */
+export const accessLabels: Record<AccessMethod, string> = {
+    MEMBERSHIP: 'Membership',
+    PAID: 'Paid',
+    VOUCHER: 'Voucher',
+};
+
+/**
+ * What one seat was taken on, as the door reads it. A covered seat says so;
+ * anything paid for says what it cost, because the amount is the only part
+ * the club still has to act on.
+ */
+export function accessSummary(seat: {
+    access_method: AccessMethod;
+    price_due: string;
+}): string {
+    return seat.access_method === 'PAID'
+        ? formatPeso(seat.price_due)
+        : accessLabels[seat.access_method];
+}
+
+/** How the club took the money, once it has. */
+export const methodLabels: Record<PaymentMethod, string> = {
+    CASH: 'Cash',
+    BANK_TRANSFER: 'Bank transfer',
+    GCASH: 'GCash',
+};
+
+/**
+ * Where a seat's money stands. One covered by membership carries no payment,
+ * and so never had anything outstanding: it reads settled like the rest.
+ */
+export function seatStanding(seat: {
+    payment?: Payment | null;
+}): PaymentStatus {
+    return seat.payment?.status ?? 'PAID';
+}
 
 /** The order the page falls back to: what is still owed leads. */
 export const defaultPaymentSort = '-owes_money';

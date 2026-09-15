@@ -31,6 +31,21 @@ export type PaymentStatus = 'PENDING' | 'PAID';
 /** How the club took the money, recorded by hand in admin once it is in. */
 export type PaymentMethod = 'CASH' | 'BANK_TRANSFER' | 'GCASH';
 
+/** How the door knew someone had arrived: it read their card, or the club did. */
+export type CheckInMethod = 'QR' | 'MANUAL';
+
+/**
+ * Proof that the holder of one seat turned up. Absent until they do, so a
+ * no-show is simply a seat with none, still registered and still paid.
+ */
+export type Attendance = {
+    id: number;
+    registration_id: number;
+    checked_in_at: string;
+    method: CheckInMethod;
+    recorded_by: number | null;
+};
+
 /** What one seat owes the club. */
 export type Payment = {
     id: number;
@@ -52,6 +67,17 @@ export type Registration = {
     payment?: Payment | null;
 };
 
+/**
+ * One person on a roster: who they are and what the club counts them as. A
+ * guest holds no level, which is what makes them a guest.
+ */
+export type Participant = {
+    id: number;
+    name: string;
+    email: string;
+    membership_level?: { id: number; name: string } | null;
+};
+
 /** What the payments page is currently narrowed and ordered by. */
 export type PaymentFilters = {
     search: string | null;
@@ -66,6 +92,16 @@ export type PaymentFilters = {
 export type SeatPayment = Registration & {
     user: { id: number; name: string; email: string };
     game: Game;
+};
+
+/**
+ * One seat on a game's roster: who is turning up, what they owe, and whether
+ * they have arrived. The game is the page itself, so a seat never repeats it.
+ */
+export type RosterSeat = Registration & {
+    user: Participant;
+    /** Null until the door records them in. */
+    attendance?: Attendance | null;
 };
 
 /** A user who can run an SRT session. */

@@ -1,53 +1,17 @@
 import { ChevronDown, ChevronsUpDown, ChevronUp, Wallet } from 'lucide-react';
 import EmptyState from '@/components/empty-state';
 import PaymentPaidDialog from '@/components/payment-paid-dialog';
+import SeatStandingPill from '@/components/seat-standing-pill';
 import SectionCard from '@/components/section-card';
 import { formatDate, formatPeso, formatTime, toDateParts } from '@/lib/format';
-import { columnSort, visitPayments } from '@/lib/payments';
+import {
+    accessLabels,
+    columnSort,
+    methodLabels,
+    visitPayments,
+} from '@/lib/payments';
 import { cn } from '@/lib/utils';
-import type {
-    AccessMethod,
-    Game,
-    PaymentFilters,
-    PaymentMethod,
-    PaymentStatus,
-    SeatPayment,
-} from '@/types';
-
-const methodLabels: Record<PaymentMethod, string> = {
-    CASH: 'Cash',
-    BANK_TRANSFER: 'Bank transfer',
-    GCASH: 'GCash',
-};
-
-/* How the member got in, which is what decides whether there is anything to
-   collect at all: a covered seat owes nothing, a paid one owes the price it
-   was taken at, and a redeemed one was settled by the voucher. */
-const accessLabels: Record<AccessMethod, string> = {
-    MEMBERSHIP: 'Membership',
-    PAID: 'Paid',
-    VOUCHER: 'Voucher',
-};
-
-const standingLabels: Record<PaymentStatus, string> = {
-    PENDING: 'Pending',
-    PAID: 'Paid',
-};
-
-/* Gold is the attention colour, so it marks the money still to come in; a seat
-   with nothing outstanding sits back. */
-const standingStyles: Record<PaymentStatus, string> = {
-    PENDING: 'bg-gold-400/15 text-gold-400',
-    PAID: 'bg-white/8 text-white/60',
-};
-
-/**
- * Where the seat's money stands. One covered by membership carries no payment,
- * and so never had anything outstanding: it reads settled like the rest.
- */
-function seatStanding(seat: SeatPayment): PaymentStatus {
-    return seat.payment?.status ?? 'PAID';
-}
+import type { Game, PaymentFilters, SeatPayment } from '@/types';
 
 /**
  * How the money came in, once it has. A seat with nothing to collect never
@@ -75,21 +39,6 @@ function gameDetail(game: Game): string {
     const chapter = game.event.chapter;
 
     return chapter ? `${month} ${day} · ${chapter.name}` : `${month} ${day}`;
-}
-
-function StandingPill({ seat }: { seat: SeatPayment }) {
-    const standing = seatStanding(seat);
-
-    return (
-        <span
-            className={cn(
-                'inline-flex w-fit items-center rounded-full px-2.5 py-1 text-[0.6875rem] font-bold tracking-wide uppercase',
-                standingStyles[standing],
-            )}
-        >
-            {standingLabels[standing]}
-        </span>
-    );
 }
 
 /**
@@ -197,7 +146,7 @@ function SeatCards({ seats }: { seats: SeatPayment[] }) {
                             </span>
                         </p>
 
-                        <StandingPill seat={seat} />
+                        <SeatStandingPill seat={seat} />
                     </div>
 
                     <div className="flex shrink-0 items-center">
@@ -285,7 +234,7 @@ function SeatTable({
                             {seatMethod(seat)}
                         </td>
                         <td className="px-5 py-4">
-                            <StandingPill seat={seat} />
+                            <SeatStandingPill seat={seat} />
                         </td>
                         <td className="px-5 py-4">
                             <div className="flex justify-end">
